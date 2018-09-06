@@ -7,8 +7,8 @@ public class HttpResponse {
 	
 	HashMap<String, String> headers;
 	
-	// Constructor opens HashMap and temporary String array for converting headers. Will store headers as key (without colon), and
-	// store value as String including everything after first space. Stops reading at "Connection: close" to avoid nullpointerexception
+	// Constructor opens HashMap and temporary String array for converting headers. Will store header parameter as key (without colon), and
+	// store header content as value(including everything after first space). Stops reading at "Connection: close" to avoid nullpointerexception
 	public HttpResponse(String response) 
 	{	
 		headers = new HashMap<String, String>();
