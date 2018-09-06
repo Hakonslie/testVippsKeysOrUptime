@@ -60,7 +60,7 @@ public class HttpResponse {
 	 * @headerName the name of the header that should be searched for
 	 */
 	public String getHeader(String headerName) {
-		if(headerName == null || headerName == "") throw new IllegalArgumentException("headerName parameter is null or empty");
+		if(headerName == null || headerName == "") return null;
 		for(HashMap.Entry<String, String> head : header.entrySet()) {
 			if(head.getKey() == headerName) return head.getValue();
 		}
@@ -69,7 +69,7 @@ public class HttpResponse {
 		if(fetchContentFromResponse(headerName)) return getHeader(headerName);
 
 		
-		return "Header: " + headerName + " Not found";
+		return null;
 	
 	}
 	}

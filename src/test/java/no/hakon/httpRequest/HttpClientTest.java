@@ -2,6 +2,7 @@ package no.hakon.httpRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+
 import java.io.IOException;
 
 import org.junit.Test;
@@ -56,9 +57,9 @@ public class HttpClientTest {
         HttpResponse response = request.execute();
 
         assertThat(response.getStatusCode()).isEqualTo(307);
-        assertThat(response.getHeader("notaheader")).isEqualTo("Header: notaheader Not found");
-        assertThat(response.getHeader(null)).isEqualTo("headerName parameter is null or empty");
-        assertThat(response.getHeader("")).isEqualTo("headerName parameter is null or empty");
+        assertThat(response.getHeader("notaheader")).isEqualTo(null);
+        assertThat(response.getHeader(null)).isEqualTo(null);
+        assertThat(response.getHeader("")).isEqualTo(null);
  
     }
 
