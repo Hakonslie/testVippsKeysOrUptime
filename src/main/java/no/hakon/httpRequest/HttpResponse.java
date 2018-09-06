@@ -11,14 +11,14 @@ import java.util.HashMap;
 public class HttpResponse {
 
 	// To do: Add response body aswell
-	String [] responseArray;
-	HashMap<String, String> header = new HashMap<String, String>();
+	String [] headerLines;
+	HashMap<String, String> headers = new HashMap<String, String>();
 
 	/*
 	 * The constructor opens the @response received and splits it line by line
 	 */
 	public HttpResponse(String response) {
-		responseArray = response.split("\r\n");	
+		headerLines = response.split("\r\n");	
 		
 		/*
 		 * If you wish to automatically add any parameters to the HashMap, remove the next lines of commenting and add your 
@@ -36,10 +36,10 @@ public class HttpResponse {
 	 */
 	private boolean fetchContentFromResponse(String parameterName) {
 		boolean found = false;
-		for(String s : responseArray)
+		for(String s : headerLines)
 		{
 			if(s.startsWith(parameterName) ) {
-				header.put(parameterName, s.split(" ")[1]);
+				headers.put(parameterName, s.split(" ", 2)[1]);
 				found = true;
 			}
 		}
@@ -49,7 +49,7 @@ public class HttpResponse {
 	// returns statusCode by using getHeader function
 		
 		public int getStatusCode() {			
-			return Integer.parseInt(getHeader("HTTP"));
+			return Integer.parseInt(getHeader("HTTP").split(" ")[0]);
 	}
 
 	/*
@@ -61,7 +61,7 @@ public class HttpResponse {
 	 */
 	public String getHeader(String headerName) {
 		if(headerName == null || headerName == "") return null;
-		for(HashMap.Entry<String, String> head : header.entrySet()) {
+		for(HashMap.Entry<String, String> head : headers.entrySet()) {
 			if(head.getKey() == headerName) return head.getValue();
 		}
 		
