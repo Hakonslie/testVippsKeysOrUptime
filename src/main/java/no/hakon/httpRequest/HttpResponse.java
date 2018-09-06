@@ -55,7 +55,7 @@ public class HttpResponse {
 	/*
 	 * getHeader function iterates the header HashMap for a key corresponding with headerName in parameter,
 	 * if it does not find a matching header it will search through the response again to see if it has not been picked up. If it 
-	 * finds it at this time it runs itself from the beginning with the same header and will find it. If it doesn't find it it returns
+	 * finds it at this time it runs itself from the beginning with the same header and will find it. 
 	 * If it does not find it then it will return "Header @headerName Not found"
 	 * @headerName the name of the header that should be searched for
 	 */
