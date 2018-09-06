@@ -1,75 +1,41 @@
 package no.hakon.httpRequest;
-
 import java.util.HashMap;
 
-/*
- * This HttpResponse class takes in the response but does not retrieve parameters before it is specifically asked to do so.
- * Uses HashMap for caching retrieved parameters.
- */
-
+// To do: Add response body as well
 
 public class HttpResponse {
-
-	// To do: Add response body aswell
-	String [] headerLines;
-	HashMap<String, String> headers = new HashMap<String, String>();
-
-	/*
-	 * The constructor opens the @response received and splits it line by line
-	 */
-	public HttpResponse(String response) {
-		headerLines = response.split("\r\n");	
-		
-		/*
-		 * If you wish to automatically add any parameters to the HashMap, remove the next lines of commenting and add your 
-		 * wanted parameters:
-		 * 	fetchContentFromResponse("HEADERNAME");
-		 * 	fetchContentFromResponse("HEADERNAME");
-		 * 	fetchContentFromResponse("HEADERNAME");
-		 */
-		
-	}
-	/*
-	 * This function fetches content from the response. Searching for headers corresponding to parameterName and adds this 
-	 * parameter to the header HashMap. It searches by using startsWith() and returns true if it finds a match.
-	 * @parameterName the name of the header that should be searched for.
-	 */
-	private boolean fetchContentFromResponse(String parameterName) {
-		boolean found = false;
-		for(String s : headerLines)
-		{
-			if(s.startsWith(parameterName) ) {
-				headers.put(parameterName, s.split(" ", 2)[1]);
-				found = true;
-			}
-		}
-		return found;
-	}
 	
-	// returns statusCode by using getHeader function
+	HashMap<String, String> headers;
+	
+	// Constructor opens HashMap and temporary String array for converting headers. Will store headers as key (without colon), and
+	// store value as String including everything after first space. Stops reading at "Connection: close" to avoid nullpointerexception
+	public HttpResponse(String response) 
+	{	
+		headers = new HashMap<String, String>();
+		String [] headerLine;
 		
-		public int getStatusCode() {			
-			return Integer.parseInt(getHeader("HTTP").split(" ")[0]);
+		for(String s : response.split("\r\n")) {			
+				headerLine = s.split(" ", 2);
+				headers.put(headerLine[0].replaceFirst(":", ""), headerLine[1]);
+				if(headerLine[0].equals("Connection:") && headerLine[1].equals("close")) break;				
+		}	
+
 	}
 
-	/*
-	 * getHeader function iterates the header HashMap for a key corresponding with headerName in parameter,
-	 * if it does not find a matching header it will search through the response again to see if it has not been picked up. If it 
-	 * finds it at this time it runs itself from the beginning with the same header and will find it. 
-	 * If it does not find it then it will return "Header @headerName Not found"
-	 * @headerName the name of the header that should be searched for
-	 */
-	public String getHeader(String headerName) {
-		if(headerName == null || headerName == "") return null;
+	// use getHeader to fetch statusCode by searching and splitting the code from the message
+	// Error might show if there is no " " to split on? Not sure
+		public int getStatusCode() 
+		{			
+			return Integer.parseInt(getHeader("HTTP/1.1").split(" ")[0]);
+	}
+	 
+	// getHeader check if input is valid and then searches the HashMap for the key and returns the corresponding value		
+	public String getHeader(String headerName) 
+	{		
+		if(headerName == null || headerName == "") return null;		
 		for(HashMap.Entry<String, String> head : headers.entrySet()) {
-			if(head.getKey() == headerName) return head.getValue();
-		}
-		
-		// Did not find this value, search again with the new parameter, if it does find it and successfully adds. Then search again.
-		if(fetchContentFromResponse(headerName)) return getHeader(headerName);
-
-		
-		return null;
-	
+			if(head.getKey().equals(headerName)) return head.getValue();
+		}		
+		return null;	
 	}
-	}
+}

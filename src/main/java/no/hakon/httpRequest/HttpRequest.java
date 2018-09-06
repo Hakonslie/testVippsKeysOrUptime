@@ -34,10 +34,9 @@ public class HttpRequest {
             while ((c = input.read()) != -1) {
             	header.append((char)c);
             }
-            response = new HttpResponse(header.toString());
             
             
-            return response;
+            return new HttpResponse(header.toString());
         }
     }
 	
