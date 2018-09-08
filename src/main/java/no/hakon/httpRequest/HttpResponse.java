@@ -6,6 +6,7 @@ import java.util.HashMap;
 public class HttpResponse {
 	
 	HashMap<String, String> headers;
+	HashMap<String, String> body;
 	
 	// Constructor opens HashMap and temporary String array for converting headers. Will store header parameter as key (without colon), and
 	// store header content as value(including everything after first space). Stops reading at "Connection: close" to avoid nullpointerexception.
@@ -13,15 +14,39 @@ public class HttpResponse {
 	
 	public HttpResponse(String response) 
 	{	
-		headers = new HashMap<String, String>();
-		String [] headerLine;
+		if(response == null || response.equals("")) throw new IllegalArgumentException("Empty response from HttpRequest");
 		
-		for(String s : response.split("\r\n")) {			
-				headerLine = s.split(" ", 2);
-				headers.put(headerLine[0].replaceFirst(":", ""), headerLine[1]);
-				if(headerLine[0].equals("Connection:") && headerLine[1].equals("close")) break;				
+		headers = new HashMap<String, String>();
+		String [] headerLineSplits;
+		String [] headerLines = response.split("\r\n");
+		
+		for(int i = 0; i < headerLines.length ; i++) {			
+				headerLineSplits = headerLines[i].split(" ", 2);
+				headers.put(headerLineSplits[0].replaceFirst(":", ""), headerLineSplits[1]);
+				if(headerLineSplits[0].equals("Connection:") && headerLineSplits[1].equals("close")) {
+					if(getHeader("Content-Type").startsWith("application/json")) {
+						retreiveJsonBody(headerLines[i + 3]);
+					}
+					else 
+						headers.put("Body", headerLines[i + 2]);
+					break;
+					
+				}
 		}	
 
+	}
+
+	private void retreiveJsonBody(String bodyContent) {
+		body = new HashMap<String, String>();
+		bodyContent.replaceAll("[\"]", "");
+		String [] bodyLines = bodyContent.split(",");
+		String [] bodyLineSplits;
+		
+		for(String s : bodyLines) {
+			bodyLineSplits = s.split(":", 2);
+			body.put(bodyLineSplits[0].replaceAll("[^a-zA-Z0-9_-]", ""), bodyLineSplits[1].replaceAll("[^a-zA-Z0-9_-]", ""));
+		}
+		
 	}
 
 	// Will fetch statusCode by searching getHeader and splitting the actual code from the message.
@@ -41,4 +66,12 @@ public class HttpResponse {
 		}		
 		return null;	
 	}
+	public String getBody(String bodyName) {
+		for(HashMap.Entry<String, String> bodyPart : body.entrySet()) {
+			if(bodyPart.getKey().equals(bodyName)) return bodyPart.getValue();
+		}
+		return null;
+	}
+	
+	
 }
