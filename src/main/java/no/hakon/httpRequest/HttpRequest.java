@@ -14,7 +14,11 @@ public class HttpRequest {
 	public HttpRequest(String host, String URI) {
 		this.host = host;
 		this.URI = URI;
-		requestHeaders = new String [] { ("GET " + URI + " HTTP/1.1\r\n"), ("Host: " + host + "\r\n"), "Connection: close\r\n", "\r\n" };
+		requestHeaders = new String [] 
+				{ 
+						("GET " + URI + " HTTP/1.1"), 
+						("Host: " + host), 
+				};
 	}
 	
 	// Constructor for specifying headers in the String[] headers parameter
@@ -69,7 +73,7 @@ public class HttpRequest {
 	
 	public HttpResponse execute() throws IOException {
 		
-		// Initiate Socket
+		// Initiate Socket Auto-close
 		
 		try(Socket socket = new Socket(host, 80)) 
 		{

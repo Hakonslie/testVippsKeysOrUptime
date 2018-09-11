@@ -24,7 +24,7 @@ public class HttpResponse {
 		for(int i = 0; i < headerLines.length ; i++) {	
 			
 			// Look for Json objects
-			if(headerLines[i].startsWith("{")) {
+			if(headerLines[i].startsWith("{") && headers.get("Content-Type").startsWith("application/json")) {
 				body = headerLines[i];
 			}
 			// If headerline is empty, skip one iteration
