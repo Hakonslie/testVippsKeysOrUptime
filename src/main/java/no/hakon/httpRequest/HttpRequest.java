@@ -9,7 +9,7 @@ public class HttpRequest {
 	String host, URI, body;
 	String [] requestHeaders;
 
-	// Constructor for specifying URL and URI for 
+	// Constructor for specifying URL and URI, no additional headers.
 	
 	public HttpRequest(String host, String URI) {
 		this.host = host;
@@ -30,18 +30,27 @@ public class HttpRequest {
 	
 	public HttpResponse executeSSL() throws IOException {
 		
+		// initiate SSL Socket and connect:
+		
 		SSLSocketFactory sslsocketfactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
 		try(SSLSocket socket = (SSLSocket) sslsocketfactory.createSocket(host, 443)) 
 		{
+			
+			// Write headers 
+			
 			for(String header : requestHeaders) {
 				socket.getOutputStream().write((header + "\r\n").getBytes());		
 			}
 			socket.getOutputStream().write(("Connection: close\r\n").getBytes());
 			socket.getOutputStream().write(("\r\n").getBytes());
 			
+			//If there is a body, add it after headers
+			
 			if(body != "") {
 				socket.getOutputStream().write(body.getBytes());
 			}
+			
+			//Get result and build string, return HttpResponse
 			
 			InputStream input = socket.getInputStream();
             StringBuilder header = new StringBuilder();
@@ -56,18 +65,25 @@ public class HttpRequest {
 			
 	}
 	
-	// This executes a request with headers specified in the requestHeaders array.
+	// This executes a request with headers specified in the requestHeaders array. 
 	
 	public HttpResponse execute() throws IOException {
 		
+		// Initiate Socket
+		
 		try(Socket socket = new Socket(host, 80)) 
 		{
+			
+			// Add headers
+			
 			for(String header : requestHeaders) 
 			{
 				socket.getOutputStream().write((header).getBytes());		
 			}
 			socket.getOutputStream().write(("Connection: close\r\n").getBytes());
 			socket.getOutputStream().write(("\r\n").getBytes());
+			
+			// Read output and return HttpResponse
 			
 			InputStream input = socket.getInputStream();
             StringBuilder header = new StringBuilder();

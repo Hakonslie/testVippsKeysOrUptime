@@ -2,9 +2,6 @@ package no.hakon.httpRequest;
 
 import java.util.HashMap;
 
-
-// To do: Add response body as well
-
 public class HttpResponse {
 	
 	HashMap<String, String> headers;
@@ -30,6 +27,7 @@ public class HttpResponse {
 			if(headerLines[i].startsWith("{")) {
 				body = headerLines[i];
 			}
+			// If headerline is empty, skip one iteration
 			else if(headerLines[i].equals("")) continue;
 			
 			else {
@@ -66,6 +64,8 @@ public class HttpResponse {
 		}		
 		return null;	
 	}	
+	
+	// return body
 	public String getBody()
 	{
 		return body;
