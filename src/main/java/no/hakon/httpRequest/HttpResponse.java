@@ -1,12 +1,14 @@
 package no.hakon.httpRequest;
+
 import java.util.HashMap;
+
 
 // To do: Add response body as well
 
 public class HttpResponse {
 	
 	HashMap<String, String> headers;
-	HashMap<String, String> body;
+	String body;
 	
 	// Constructor opens HashMap and temporary String array for converting headers. Will store header parameter as key (without colon), and
 	// store header content as value(including everything after first space). Stops reading at "Connection: close" to avoid nullpointerexception.
@@ -20,35 +22,33 @@ public class HttpResponse {
 		String [] headerLineSplits;
 		String [] headerLines = response.split("\r\n");
 		
-		for(int i = 0; i < headerLines.length ; i++) {			
+		// For loops puts all headers in headers HashMap and when it reaches the end put body in String body
+		
+		for(int i = 0; i < headerLines.length ; i++) {	
+			
+			// Look for Json objects
+			if(headerLines[i].startsWith("{")) {
+				body = headerLines[i];
+			}
+			else if(headerLines[i].equals("")) continue;
+			
+			else {
+				// If header is valid and has key + value
+				if(headerLines[i].split(" ", 2).length > 1)
+				{
 				headerLineSplits = headerLines[i].split(" ", 2);
 				headers.put(headerLineSplits[0].replaceFirst(":", ""), headerLineSplits[1]);
-				if(headerLineSplits[0].equals("Connection:") && headerLineSplits[1].equals("close")) {
-					if(getHeader("Content-Type").startsWith("application/json")) {
-						retreiveJsonBody(headerLines[i + 3]);
-					}
-					else 
-						headers.put("Body", headerLines[i + 2]);
-					break;
-					
 				}
+				// else put key with empty value
+				else {
+					headers.put(headerLines[i], "");
+				}
+			}
+
 		}	
-
 	}
-
-	private void retreiveJsonBody(String bodyContent) {
-		body = new HashMap<String, String>();
-		bodyContent.replaceAll("[\"]", "");
-		String [] bodyLines = bodyContent.split(",");
-		String [] bodyLineSplits;
-		
-		for(String s : bodyLines) {
-			bodyLineSplits = s.split(":", 2);
-			body.put(bodyLineSplits[0].replaceAll("[^a-zA-Z0-9_-]", ""), bodyLineSplits[1].replaceAll("[^a-zA-Z0-9_-]", ""));
-		}
-		
-	}
-
+	
+	
 	// Will fetch statusCode by searching getHeader and splitting the actual code from the message.
 	// Error might show if there is no " " to split on? Not sure.
 	public int getStatusCode() 
@@ -65,13 +65,9 @@ public class HttpResponse {
 			if(head.getKey().equals(headerName)) return head.getValue();
 		}		
 		return null;	
+	}	
+	public String getBody()
+	{
+		return body;
 	}
-	public String getBody(String bodyName) {
-		for(HashMap.Entry<String, String> bodyPart : body.entrySet()) {
-			if(bodyPart.getKey().equals(bodyName)) return bodyPart.getValue();
-		}
-		return null;
-	}
-	
-	
 }

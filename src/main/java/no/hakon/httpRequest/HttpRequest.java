@@ -6,64 +6,42 @@ import java.net.Socket;
 import javax.net.ssl.*;
 
 public class HttpRequest {
-	String URL, URI;
+	String host, URI, body;
 	String [] requestHeaders;
 
-	public HttpRequest(String URL, String URI) {
-		this.URL = URL;
-		this.URI = URI;	
-		requestHeaders = new String [] { ("GET " + URI + " HTTP/1.1\r\n"), ("Host: " + URL + "\r\n"), "Connection: close\r\n", "\r\n" };
+	// Constructor for specifying URL and URI for 
+	
+	public HttpRequest(String host, String URI) {
+		this.host = host;
+		this.URI = URI;
+		requestHeaders = new String [] { ("GET " + URI + " HTTP/1.1\r\n"), ("Host: " + host + "\r\n"), "Connection: close\r\n", "\r\n" };
 	}
 	
-	public HttpRequest(String[] headers, String URL, String URI) {
+	// Constructor for specifying headers in the String[] headers parameter
+	
+	public HttpRequest(String[] headers, String host, String body) {
 		requestHeaders = headers;
-		this.URL = URL;
-		this.URI = URI;	
+		this.host = host;
+		this.body = body;
+		
 	}
 	
-	public HttpResponse executeSpecifiedSSL() throws IOException {
+	// This executes a secure SSL request with headers specified in the requestHeaders array.
+	
+	public HttpResponse executeSSL() throws IOException {
 		
-
 		SSLSocketFactory sslsocketfactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
-	;
-		
-		try(SSLSocket socket = (SSLSocket) sslsocketfactory.createSocket(URL, 443)) {
-		for(String header : requestHeaders) {
-			socket.getOutputStream()
+		try(SSLSocket socket = (SSLSocket) sslsocketfactory.createSocket(host, 443)) 
+		{
+			for(String header : requestHeaders) {
+				socket.getOutputStream().write((header + "\r\n").getBytes());		
+			}
+			socket.getOutputStream().write(("Connection: close\r\n").getBytes());
+			socket.getOutputStream().write(("\r\n").getBytes());
 			
-				.write((header + "\r\n").getBytes());		
-		}
-			socket.getOutputStream()
-				.write(("Connection: close\r\n").getBytes());
-			socket.getOutputStream()
-				.write(("\r\n").getBytes());
-			
-			InputStream input = socket.getInputStream();
-            StringBuilder header = new StringBuilder();
-            
-            int c;
-            while ((c = input.read()) != -1) {
-            	header.append((char)c);
-            }
-            
-            return new HttpResponse(header.toString());
-        }
-			
-		}
-	
-	
-	public HttpResponse executeSpecified() throws IOException {
-		
-		try(Socket socket = new Socket(URL, 80)) {
-		for(String header : requestHeaders) {
-			socket.getOutputStream()
-			
-				.write((header).getBytes());		
-		}
-			socket.getOutputStream()
-				.write(("Connection: close\r\n").getBytes());
-			socket.getOutputStream()
-				.write(("\r\n").getBytes());
+			if(body != "") {
+				socket.getOutputStream().write(body.getBytes());
+			}
 			
 			InputStream input = socket.getInputStream();
             StringBuilder header = new StringBuilder();
@@ -72,10 +50,37 @@ public class HttpRequest {
             while ((c = input.read()) != -1) {
             	header.append((char)c);
             }
+                      
+            return new HttpResponse(header.toString());
+        }
+			
+	}
+	
+	// This executes a request with headers specified in the requestHeaders array.
+	
+	public HttpResponse execute() throws IOException {
+		
+		try(Socket socket = new Socket(host, 80)) 
+		{
+			for(String header : requestHeaders) 
+			{
+				socket.getOutputStream().write((header).getBytes());		
+			}
+			socket.getOutputStream().write(("Connection: close\r\n").getBytes());
+			socket.getOutputStream().write(("\r\n").getBytes());
+			
+			InputStream input = socket.getInputStream();
+            StringBuilder header = new StringBuilder();
+            
+            int c;
+            while ((c = input.read()) != -1) 
+            {
+            	header.append((char)c);
+            }
             
             return new HttpResponse(header.toString());
         }
 			
-		}
+	}
 	
 }
