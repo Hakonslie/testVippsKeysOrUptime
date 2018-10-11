@@ -1,4 +1,4 @@
-# hakon.HttpRequest
+# testVippsKeysOrUptime
 
 Script to test subsciption-keys and uptime in Vipps test environment.
 
