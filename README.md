@@ -2,6 +2,8 @@
 
 Script to test subsciption-keys and uptime in Vipps test environment.
 
+To run this script you need an IDE with capabilities of running a Junit Test application.
+
 For the WebPageButtonClicker to run you need to properly link your 
 geckodriver with your JVM and you need firefox installed. Look at the comment to specify.
 
