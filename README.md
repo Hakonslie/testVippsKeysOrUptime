@@ -9,27 +9,34 @@ You need to create a VIPPS_APIKeys.java file and include these fields:
 (Got from https://api-portal.vipps.no or https://apitest-portal.vipps.no )
 
 
-### Root host:
+### General:
 ```java
-public static String urlRoot = "";
+public static String orderId = "501283542";
+public static final String urlRoot = "apitest.vipps.no"; // Can also be api.vipps.no
+public static final String mobileNumber = ""; // Mobile test number here
 ```
 
 ### Access Token:
 ``` java
-public static String accesstokenuri = "";
-public static String accessTokenSubscriptionKey = "";
-public static String clientId = "";
-public static String clientSecret = "";
+public static final String accesstokenuri = "/accesstoken/get";
+public static final String clientId = "";
+public static final String clientSecret = "";
+public static final String accessTokenSubscriptionKey = "";
 ```
 
 ### Product keys:
 ``` java
-public static String producturi = "";
-public static String merchantSerialNumber = "";
-public static String productSubscriptionKey = "";
+public static final String merchantSerialNumber = "";
+public static final String productSubscriptionKey = "";
+public static final String producturi = "/ecomm/v2/payments";
 ```
 
-
+### incrementOrderId method:
+``` java
+public static void incrementOrderId() {
+	orderId = "" + (Integer.parseInt(orderId) + 1);
+}
+```
 feel free to contribute!
 
 Regards,
