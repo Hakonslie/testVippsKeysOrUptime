@@ -1,4 +1,4 @@
-package no.hakon.httpRequest;
+package vippsKeys;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,6 +62,7 @@ public class HttpRequest {
             int c;
             while ((c = input.read()) != -1) {
             	header.append((char)c);
+            	System.out.print((char)c);
             }
                       
             return new HttpResponse(header.toString());

@@ -1,9 +1,9 @@
-package no.hakon.httpRequest;
+package vippsKeys;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class VIPPS_CustomerInfo {
+public class VIPPS_CustomerInfoJSON {
 
 @SerializedName("mobileNumber")
 @Expose

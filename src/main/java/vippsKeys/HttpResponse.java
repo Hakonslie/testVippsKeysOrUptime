@@ -1,4 +1,4 @@
-package no.hakon.httpRequest;
+package vippsKeys;
 
 import java.util.HashMap;
 
